@@ -4,110 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatGPT</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function sendRequest() {
+            var userInput = document.getElementById("userInput").value;
+            $.ajax({
+                type: "POST",
+                url: "https://ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:8000/ask",
+                contentType: "application/json",
+                data: JSON.stringify({ "prompt": userInput }),
+                success: function(response) {
+                    document.getElementById("response").innerHTML = "ChatGPT: " + response.reply;
+                },
+                error: function(error) {
+                    console.error("Error:", error);
+                }
+            });
         }
-
-        #chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        #chat-output {
-            flex-grow: 6;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            overflow-y: auto;
-        }
-
-        #chat-input-form {
-            flex-grow: 1;
-            display: flex;
-        }
-
-        #chat-input {
-            flex-grow: 1;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            padding: 0.5rem;
-            outline: none;
-        }
-
-        button {
-            background-color: #007BFF;
-            border: none;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin: 0 0 0 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-            padding: 0.5rem 1rem;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-            text-decoration: none;
-        }
-
-        p {
-            margin: 0.5rem 0;
-        }
-
-        @media (max-width: 800px) {
-            #chat-container {
-                width: 100%;
-            }
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <div id="conversation-container">
-        <div id="conversation"></div>
-    </div>
-    <input type="text" id="user-input" placeholder="Type your message here...">
-    <button id="send-button">Send</button>
-    <script>
-        const conversationElement = document.getElementById('conversation');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-
-        const apiEndpoint = 'http://ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:5000/api/ask_question';
-
-        sendButton.addEventListener('click', async () => {
-            const userText = userInput.value;
-            userInput.value = '';
-
-            conversationElement.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
-
-            const response = await fetch(apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'message': userText
-                })
-            });
-
-            const responseData = await response.json();
-            const assistantText = responseData.reply;
-
-            conversationElement.innerHTML += `<p><strong>Assistant:</strong> ${assistantText}</p>`;
-        });
-
-    </script>
+    <h1>ChatGPT</h1>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendRequest()">Send</button>
+    <p id="response"></p>
 </body>
 </html>
-
-
