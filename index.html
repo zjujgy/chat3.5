@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT App</title>
+    <title>ChatGPT</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,41 +69,45 @@
                 width: 100%;
             }
         }
-
     </style>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="chat-output"></div>
-        <form id="chat-input-form">
-            <input type="text" id="chat-input" autocomplete="off">
-            <button type="submit">Send</button>
-        </form>
+    <div id="conversation-container">
+        <div id="conversation"></div>
     </div>
+    <input type="text" id="user-input" placeholder="Type your message here...">
+    <button id="send-button">Send</button>
     <script>
-        document.getElementById("chat-input-form").addEventListener("submit", function(event) {
-            event.preventDefault();
+        const conversationElement = document.getElementById('conversation');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
 
-            const chatInput = document.getElementById("chat-input");
-            const chatOutput = document.getElementById("chat-output");
+        const apiEndpoint = 'http://ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:5000/api/ask_question';
 
-            const question = chatInput.value;
-            chatInput.value = "";
+        sendButton.addEventListener('click', async () => {
+            const userText = userInput.value;
+            userInput.value = '';
 
-            chatOutput.innerHTML += `<p>You: ${question}</p>`;
+            conversationElement.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
 
-            fetch("/ask", {
-                method: "POST",
-                body: new FormData(event.target)
-            })
-            .then(response => response.json())
-            .then(data => {
-                chatOutput.innerHTML += `<p>ChatGPT: ${data.response}</p>`;
-            })
-            .catch(error => {
-                console.error("Error:", error);
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'message': userText
+                })
             });
+
+            const responseData = await response.json();
+            const assistantText = responseData.reply;
+
+            conversationElement.innerHTML += `<p><strong>Assistant:</strong> ${assistantText}</p>`;
         });
+
     </script>
 </body>
 </html>
+
+
