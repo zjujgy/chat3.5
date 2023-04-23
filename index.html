@@ -4,29 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatGPT</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script>
-        function sendRequest() {
-            var userInput = document.getElementById("userInput").value;
-            $.ajax({
-                type: "POST",
-                url: "https://ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:8000/ask",
-                contentType: "application/json",
-                data: JSON.stringify({ "prompt": userInput }),
-                success: function(response) {
-                    document.getElementById("response").innerHTML = "ChatGPT: " + response.reply;
-                },
-                error: function(error) {
-                    console.error("Error:", error);
-                }
-            });
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
         }
-    </script>
+        #chat-container {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #input-container {
+            display: flex;
+            margin-top: 16px;
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #submit-button {
+            margin-left: 8px;
+            padding: 8px 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>ChatGPT</h1>
-    <input type="text" id="userInput" placeholder="Type your message...">
-    <button onclick="sendRequest()">Send</button>
-    <p id="response"></p>
+    <div id="chat-container"></div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button id="submit-button" onclick="submitMessage()">Send</button>
+    </div>
+
+    <script>
+        $("#send-btn").click(function() {
+            var userInput = $("#user-input").val();
+            $("#user-input").val("");
+            $("#conversation").append("You: " + userInput + "<br>");
+
+            $.ajax({
+                url: "ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:8000/ask",
+                type: "POST",
+                data: JSON.stringify({prompt: userInput}),
+                contentType: "application/json",
+                success: function(response) {
+                    $("#conversation").append("ChatGPT: " + response.response + "<br>");
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+
