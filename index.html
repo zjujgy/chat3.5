@@ -3,72 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT</title>
+    <title>ChatGPT-3.5</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Helvetica", sans-serif;
+            background-color: white;
             display: flex;
             flex-direction: column;
             height: 100vh;
             margin: 0;
-            background-color: #f5f5f5;
         }
-        #chat-container {
-            flex-grow: 1;
-            padding: 16px;
-            overflow-y: auto;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+
+        #conversation {
+            flex: 6;
+            overflow-y: scroll;
+            padding: 1rem;
+            border: 1px solid black;
+            box-sizing: border-box;
+            white-space: pre-wrap;
         }
-        #input-container {
-            display: flex;
-            margin-top: 16px;
-        }
-        #user-input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #submit-button {
-            margin-left: 8px;
-            padding: 8px 16px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #submit-button:hover {
-            background-color: #0056b3;
+
+        #userInput {
+            flex: 2;
+            padding: 1rem;
+            border: 1px solid black;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            resize: none;
         }
     </style>
 </head>
 <body>
-    <div id="chat-container"></div>
-    <div id="input-container">
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button id="submit-button" onclick="submitMessage()">Send</button>
-    </div>
-
+    <textarea id="conversation" readonly></textarea>
+    <textarea id="userInput" placeholder="Type your question here..." onkeydown="handleKeyDown(event)"></textarea>
     <script>
-        $("#send-btn").click(function() {
-            var userInput = $("#user-input").val();
-            $("#user-input").val("");
-            $("#conversation").append("You: " + userInput + "<br>");
+        async function askQuestion(question) {
+            const responseElement = document.getElementById("conversation");
 
-            $.ajax({
-                url: "ec2-user@ec2-52-9-104-11.us-west-1.compute.amazonaws.com:8000/ask",
-                type: "POST",
-                data: JSON.stringify({prompt: userInput}),
-                contentType: "application/json",
-                success: function(response) {
-                    $("#conversation").append("ChatGPT: " + response.response + "<br>");
-                }
+            const response = await fetch("http://52.9.104.11:8000/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ question }),
             });
-        });
+
+            if (response.ok) {
+                const data = await response.json();
+                responseElement.value += "ChatGPT: " + data.response + "\n";
+                responseElement.scrollTop = responseElement.scrollHeight;
+            } else {
+                responseElement.value += "Error: " + response.statusText + "\n";
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                const userInput = document.getElementById("userInput");
+                const question = userInput.value.trim();
+                if (question) {
+                    const responseElement = document.getElementById("conversation");
+                    responseElement.value += "You: " + question + "\n";
+                    askQuestion(question);
+                    userInput.value = "";
+                }
+            }
+        }
     </script>
 </body>
 </html>
-
