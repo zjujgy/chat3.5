@@ -37,32 +37,32 @@
     <textarea id="conversation" readonly></textarea>
     <textarea id="userInput" placeholder="Type your question here..." onkeydown="handleKeyDown(event)"></textarea>
     <script>
-        async function askQuestion(question) {
-            const responseElement = document.getElementById("conversation");
+    async function askQuestion(question) {
+        const responseElement = document.getElementById("conversation");
 
-            const headers = new Headers();
-            headers.append('Content-Type', 'application/json');
-            headers.append('User-Id', localStorage.getItem('user_id'));
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('User-Id', localStorage.getItem('user_id'));
 
-            const token = localStorage.getItem('token');
-            if (token) {
-                headers.append('Authorization', 'Bearer ' + token);
-            }
+        const token = localStorage.getItem('token');
+        if (token) {
+            headers.append('Authorization', 'Bearer ' + token);
+        }
 
-            const response = await fetch("http://52.9.104.11:8000/ask", {
-                method: "POST",
-                headers: headers, // Use the headers variable here
-                body: JSON.stringify({ question }),
-            });
+        const response = await fetch("http://52.9.104.11:8000/ask", {
+            method: "POST",
+            headers: headers, // Use the headers variable here
+            body: JSON.stringify({ question }),
+        });
 
-            console.log("Response from server:", response);
-            const responseData = await response.json();
-            console.log("Response data:", responseData);
+        console.log("Response from server:", response);
+        const responseData = await response.json();
+        console.log("Response data:", responseData);
 
-            if (response.ok) {
-                responseElement.value += "ChatGPT: " + responseData.response + "\n";
-                responseElement.scrollTop = responseElement.scrollHeight;
-            } else {
+        if (response.ok) {
+            responseElement.value += "ChatGPT: " + responseData.response + "\n";
+            responseElement.scrollTop = responseElement.scrollHeight;
+        } else {
                 responseElement.value += "Error: " + response.statusText + "\n";
             }
         }
