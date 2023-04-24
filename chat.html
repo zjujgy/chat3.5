@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT-3.5</title>
+    <style>
+        body {
+            font-family: "Helvetica", sans-serif;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #conversation {
+            flex: 6;
+            overflow-y: scroll;
+            padding: 1rem;
+            border: 1px solid black;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+        }
+
+        #userInput {
+            flex: 2;
+            padding: 1rem;
+            border: 1px solid black;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="conversation" readonly></textarea>
+    <textarea id="userInput" placeholder="Type your question here..." onkeydown="handleKeyDown(event)"></textarea>
+    <script>
+        async function askQuestion(question) {
+            const responseElement = document.getElementById("conversation");
+
+            const response = await fetch("https://52.9.104.11:8000/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ question }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                responseElement.value += "ChatGPT: " + data.response + "\n";
+                responseElement.scrollTop = responseElement.scrollHeight;
+            } else {
+                responseElement.value += "Error: " + response.statusText + "\n";
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                const userInput = document.getElementById("userInput");
+                const question = userInput.value.trim();
+                if (question) {
+                    const responseElement = document.getElementById("conversation");
+                    responseElement.value += "You: " + question + "\n";
+                    askQuestion(question);
+                    userInput.value = "";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
