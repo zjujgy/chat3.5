@@ -44,7 +44,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": localStorage.getItem('access_token')
+                    "User-Id": localStorage.getItem("user_id")
                 },
                 body: JSON.stringify({ question }),
             });
@@ -60,6 +60,7 @@
                 responseElement.value += "Error: " + response.statusText + "\n";
             }
         }
+
 
 
         function handleKeyDown(event) {

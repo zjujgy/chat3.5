@@ -79,11 +79,13 @@
 
             if (response.ok) {
                 const data = await response.json();
+                console.log("Login response data:", data); // Add this line
                 localStorage.setItem('user_id', data['user_id']);
                 window.location.href = "https://zjujgy.github.io/chat3.5/chat.html";
             } else {
                 // Show an error message or handle the error as appropriate
             }
+
 
 
         });
