@@ -51,7 +51,10 @@
 
             const response = await fetch("http://52.9.104.11:8000/ask", {
                 method: "POST",
-                headers: headers,
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${accessToken}` // Add this line
+                },
                 body: JSON.stringify({ question }),
             });
 
