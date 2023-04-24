@@ -44,23 +44,23 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + localStorage.getItem('access_token')
+                    "Authorization": localStorage.getItem('access_token')
                 },
                 body: JSON.stringify({ question }),
             });
 
-            console.log("Response from server:", response);  // Add this line
+            console.log("Response from server:", response);
             const responseData = await response.json();
-            console.log("Response data:", responseData);  // Add this line
+            console.log("Response data:", responseData);
 
             if (response.ok) {
-                const data = await response.json();
-                responseElement.value += "ChatGPT: " + data.response + "\n";
+                responseElement.value += "ChatGPT: " + responseData.response + "\n";
                 responseElement.scrollTop = responseElement.scrollHeight;
             } else {
                 responseElement.value += "Error: " + response.statusText + "\n";
             }
         }
+
 
         function handleKeyDown(event) {
             if (event.key === "Enter" && !event.shiftKey) {
