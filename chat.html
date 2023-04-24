@@ -46,6 +46,7 @@
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
                 body: new URLSearchParams({ question }),
+                credentials: 'include',
             });
 
             if (response.ok) {
@@ -71,5 +72,6 @@
             }
         }
     </script>
+
 </body>
 </html>
