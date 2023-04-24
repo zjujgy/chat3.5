@@ -51,10 +51,7 @@
 
             const response = await fetch("http://52.9.104.11:8000/ask", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${accessToken}` // Add this line
-                },
+                headers: headers, // Use the headers variable here
                 body: JSON.stringify({ question }),
             });
 
@@ -84,6 +81,7 @@
             }
         }
     </script>
+
 </body>
 
 </html>
