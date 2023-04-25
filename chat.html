@@ -61,7 +61,7 @@
             console.log("Response data:", responseData);
 
             if (response.ok) {
-                responseElement.value += "ChatGPT: " + responseData.response + "\n";
+                responseElement.value += "ChatGPT: " + responseData.answer + "\n";
                 responseElement.scrollTop = responseElement.scrollHeight;
             } else {
                 responseElement.value += "Error: " + response.statusText + "\n";
