@@ -45,6 +45,7 @@
             headers.append('User-Id', localStorage.getItem('user_id'));
 
             const token = localStorage.getItem('token');
+            console.log("Token from localStorage:", token);
             if (token) {
                 headers.append('Authorization', 'Bearer ' + token);
             }
